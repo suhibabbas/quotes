@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Objects;
+import java.util.Random;
 import java.util.Scanner;
 
 public class App {
@@ -24,22 +26,38 @@ public class App {
             System.out.println("done");
             BookContact[] bookContact = gson.fromJson(reader,BookContact[].class); //https://howtodoinjava.com/gson/gson-parse-json-array/
 
-            System.out.println("Please enter the author name");
-            String author = scanner.nextLine();
-            System.out.println(searchByAuthor(bookContact,author));
+//            System.out.println("Please enter the author name");
+//            String author = scanner.nextLine();
+//            System.out.println(searchByAuthor(bookContact,author));
 
-            System.out.println("");
+//            System.out.println("");
+//
+//            System.out.println("Please enter one word for the quote");
+//            String word = scanner.nextLine();
+//            System.out.println(searchByWord(bookContact,word));
 
-            System.out.println("Please enter one word for the quote");
-            String word = scanner.nextLine();
-            System.out.println(searchByWord(bookContact,word));
-
+            random(bookContact);
 
         }catch (IOException exception){
             System.err.println(exception.getMessage());
         }
 
 
+
+     }
+     public static void random  (BookContact[] bookContacts){
+         int random = (int)Math.floor(Math.random()*(100-1+1)+1);
+         int count = 0;
+
+
+         for (BookContact val:bookContacts
+              ) {
+             if(count == random && !Objects.equals(val.text, "")){
+                 System.out.println(val.text);
+             }
+             count++;
+
+         }
 
      }
 
