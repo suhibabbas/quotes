@@ -5,20 +5,37 @@ package quotes;
 
 import com.google.gson.Gson;
 
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
-import java.util.Random;
 import java.util.Scanner;
 
 public class App {
 
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws IOException {
 
-        try {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Plz select the \'Online\' or \'Local\'");
+        String input =scanner.nextLine();
+
+        if(input.equals("Online")){
+            quoteUrl();
+        }else if(input.equals("Local")){
+            quoteFile();
+        }else {
+            System.out.println("Wrong input");
+        }
+
+
+
+     }
+
+     public static void quoteFile(){
+                 try {
             Scanner scanner =new Scanner(System.in);
             Gson gson =new Gson();
 
@@ -26,25 +43,42 @@ public class App {
             System.out.println("done");
             BookContact[] bookContact = gson.fromJson(reader,BookContact[].class); //https://howtodoinjava.com/gson/gson-parse-json-array/
 
-//            System.out.println("Please enter the author name");
-//            String author = scanner.nextLine();
-//            System.out.println(searchByAuthor(bookContact,author));
-
-//            System.out.println("");
-//
-//            System.out.println("Please enter one word for the quote");
-//            String word = scanner.nextLine();
-//            System.out.println(searchByWord(bookContact,word));
-
             random(bookContact);
 
         }catch (IOException exception){
             System.err.println(exception.getMessage());
         }
-
-
-
      }
+
+     public static void quoteUrl() throws IOException{
+         // go to the internet and get the json data
+         // make a url for the API
+         URL quoteUrl = new URL("http://api.forismatic.com/api/1.0/?method=getQuote&format=json&lang=en");
+
+         // Making a connection to the API
+         HttpURLConnection quoteHttp = (HttpURLConnection) quoteUrl.openConnection();
+
+         // specify the method for the connection
+         quoteHttp.setRequestMethod("GET");
+
+         // Read the response from the API
+         InputStreamReader quoteReader = new InputStreamReader(quoteHttp.getInputStream());
+
+         BufferedReader quoteBufferedReader = new BufferedReader(quoteReader);
+         String data = quoteBufferedReader.readLine();
+
+
+         Gson gson = new Gson();
+         Quote quote = gson.fromJson(data , Quote.class);
+
+         System.out.println(quote);
+
+         File quotFile = new File("C:\\Users\\ghl1590\\java\\quotes\\resources\\quote.json");
+         try(FileWriter quoteFileWriter = new FileWriter(quotFile)){
+             gson.toJson(quote, quoteFileWriter);
+         }
+     }
+
      public static void random  (BookContact[] bookContacts){
          int random = (int)Math.floor(Math.random()*(100-1+1)+1);
          int count = 0;

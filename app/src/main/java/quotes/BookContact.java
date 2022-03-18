@@ -1,11 +1,14 @@
 package quotes;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class BookContact {
 
     String author;
     String text ;
+
+
 
     public BookContact(String author, String text) {
 
