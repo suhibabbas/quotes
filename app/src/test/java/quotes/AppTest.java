@@ -6,8 +6,9 @@ package quotes;
 import com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Scanner;
@@ -16,34 +17,48 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AppTest {
 
-@Test void searchByAuthorTest(){
-    String expectedResult = "build a";
+//@Test void searchByAuthorTest(){
+//    String expectedResult = "build a";
+//
+//    try {
+//        Gson gson =new Gson();
+//        Reader reader = Files.newBufferedReader(Paths.get("C:\\Users\\ghl1590\\java\\quotes\\resources\\book.json"));
+//        BookContact[] bookContact = gson.fromJson(reader,BookContact[].class);
+//
+//        String testResult = App.searchByAuthor(bookContact,"Judy Yogev");
+//        assertEquals(expectedResult,testResult);
+//
+//    }catch (IOException exception){
+//        System.err.println(exception.getMessage());
+//    }
+//}
+//@Test void searchByWord(){
+//    String expectedResult = "If liberty means anything at all it means the right to tell people what they do not want to hear.";
+//
+//    try {
+//        Gson gson =new Gson();
+//        Reader reader = Files.newBufferedReader(Paths.get("C:\\Users\\ghl1590\\java\\quotes\\resources\\book.json"));
+//        BookContact[] bookContact = gson.fromJson(reader,BookContact[].class);
+//
+//        String testResult = App.searchByWord(bookContact,"anything");
+//        assertEquals(expectedResult,testResult);
+//    }catch (IOException exception){
+//        System.err.println(exception.getMessage());
+//    }
+//
+//}
 
-    try {
-        Gson gson =new Gson();
-        Reader reader = Files.newBufferedReader(Paths.get("C:\\Users\\ghl1590\\java\\quotes\\resources\\book.json"));
-        BookContact[] bookContact = gson.fromJson(reader,BookContact[].class);
+@Test void quoteUrlTest() throws IOException {
 
-        String testResult = App.searchByAuthor(bookContact,"Judy Yogev");
-        assertEquals(expectedResult,testResult);
-
-    }catch (IOException exception){
-        System.err.println(exception.getMessage());
-    }
-}
-@Test void searchByWord(){
-    String expectedResult = "If liberty means anything at all it means the right to tell people what they do not want to hear.";
-
-    try {
-        Gson gson =new Gson();
-        Reader reader = Files.newBufferedReader(Paths.get("C:\\Users\\ghl1590\\java\\quotes\\resources\\book.json"));
-        BookContact[] bookContact = gson.fromJson(reader,BookContact[].class);
-
-        String testResult = App.searchByWord(bookContact,"anything");
-        assertEquals(expectedResult,testResult);
-    }catch (IOException exception){
-        System.err.println(exception.getMessage());
-    }
+    URL quoteUrl = new URL("http://api.forismatic.com/api/1.0/?method=getQuote&format=json&lang=en");
+    HttpURLConnection quoteHttp = (HttpURLConnection) quoteUrl.openConnection();
+    quoteHttp.setRequestMethod("GET");
+    InputStreamReader quoteReader = new InputStreamReader(quoteHttp.getInputStream());
+    BufferedReader quoteBufferedReader = new BufferedReader(quoteReader);
+    String data = quoteBufferedReader.readLine();
+    Gson gson = new Gson();
+    Quote quote = gson.fromJson(data , Quote.class);
+    assertNotEquals("",data);
 
 }
 
