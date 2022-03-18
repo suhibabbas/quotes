@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
@@ -22,12 +23,17 @@ public class App {
         System.out.println("Plz select the \'Online\' or \'Local\'");
         String input =scanner.nextLine();
 
-        if(input.equals("Online")){
-            quoteUrl();
-        }else if(input.equals("Local")){
-            quoteFile();
-        }else {
-            System.out.println("Wrong input");
+
+        try {
+            if (input.equals("Online")) {
+                quoteUrl();
+            } else if (input.equals("Local")) {
+                quoteFile();
+            } else {
+                System.out.println("Wrong input");
+            }
+        }catch (Exception e){
+            System.err.println(e.getMessage());
         }
 
 
@@ -51,26 +57,22 @@ public class App {
      }
 
      public static void quoteUrl() throws IOException{
-         // go to the internet and get the json data
-         // make a url for the API
+
          URL quoteUrl = new URL("http://api.forismatic.com/api/1.0/?method=getQuote&format=json&lang=en");
 
-         // Making a connection to the API
          HttpURLConnection quoteHttp = (HttpURLConnection) quoteUrl.openConnection();
-
-         // specify the method for the connection
          quoteHttp.setRequestMethod("GET");
 
-         // Read the response from the API
          InputStreamReader quoteReader = new InputStreamReader(quoteHttp.getInputStream());
-
          BufferedReader quoteBufferedReader = new BufferedReader(quoteReader);
-         String data = quoteBufferedReader.readLine();
 
+         // another way
+//         BufferedReader quotBReader = new BufferedReader(new InputStreamReader(quoteUrl.openStream()));
+
+         String data = quoteBufferedReader.readLine();
 
          Gson gson = new Gson();
          Quote quote = gson.fromJson(data , Quote.class);
-
          System.out.println(quote);
 
          File quotFile = new File("C:\\Users\\ghl1590\\java\\quotes\\resources\\quote.json");
